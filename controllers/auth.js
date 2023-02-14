@@ -32,6 +32,7 @@ const loginUsuario = async(request, res = response) => {
             ok: true,
             uid: dbUser.id,
             name: dbUser.name,
+            email: dbUser.email,
             token: token
         })
     } catch (error) {
@@ -73,6 +74,7 @@ const crearUsuario = async(request, res = response) => {
             ok: true,
             uid: dbUser.id,
             name: name,
+            email: email,
             token: token
         })
     } catch (error) {
@@ -84,15 +86,19 @@ const crearUsuario = async(request, res = response) => {
 };
 
 const validarUsuario = async(request, res = response) => {
-    const {uid, name} = request;
+    const { uid } = request;
+
+    // Leer la DB
+    const dbUser = await Usuario.findById(uid);
 
     // Generar el JWT
-    const token = await generarJWT(uid, name);
+    const token = await generarJWT(uid, dbUser.name);
 
     return res.json({
         ok: true,
         uid: uid,
-        name: name,
+        name: dbUser.name,
+        email: dbUser.email,
         token: token
     })
 };
